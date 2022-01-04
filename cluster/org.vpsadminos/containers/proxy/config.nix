@@ -19,11 +19,6 @@ let
     cluster = config.cluster;
     name = "org.vpsadminos/containers/int.www";
   };
-
-  bbmaster = confLib.findConfig {
-    cluster = config.cluster;
-    name = "org.vpsadminos/containers/int.bb.master";
-  };
 in {
   imports = [
     ../../../../environments/base.nix
@@ -76,34 +71,6 @@ in {
         enableACME = true;
         forceSSL = true;
         locations."/".proxyPass = "http://${cache.services.nix-serve.address}:${toString cache.services.nix-serve.port}";
-      };
-
-      "master.bb.vpsadminos.org" = {
-        enableACME = true;
-        forceSSL = true;
-        basicAuthFile = "/private/nginx/bbmaster.htpasswd";
-        locations =
-          let
-            target = "http://${bbmaster.services.buildbot-master.address}:${toString bbmaster.services.buildbot-master.port}";
-          in {
-            "/".proxyPass = target;
-            "/sse".extraConfig = ''
-              proxy_buffering off;
-              proxy_pass ${target}/sse/;
-            '';
-            "/ws".extraConfig = ''
-              proxy_http_version 1.1;
-              proxy_set_header Upgrade $http_upgrade;
-              proxy_set_header Connection "upgrade";
-              proxy_pass ${target}/ws;
-              proxy_read_timeout 6000s;
-            '';
-            "/change_hook".extraConfig = ''
-              auth_basic secured;
-              auth_basic_user_file /private/nginx/bbgithub.htpasswd;
-              proxy_pass ${target}/change_hook/github;
-            '';
-          };
       };
     };
   };

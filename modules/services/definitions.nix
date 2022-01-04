@@ -33,7 +33,6 @@ in {
 
   config = {
     serviceDefinitions = {
-      buildbot-master.port = 8010;
       nginx.port = 80;
       nix-serve.port = 5000;
       node-exporter.port = 9100;

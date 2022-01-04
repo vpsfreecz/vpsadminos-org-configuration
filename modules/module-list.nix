@@ -2,6 +2,7 @@ rec {
   shared = [
     ./cluster
     ./services/definitions.nix
+    ./system/monitoring.nix
   ];
 
   nixos = shared ++ [

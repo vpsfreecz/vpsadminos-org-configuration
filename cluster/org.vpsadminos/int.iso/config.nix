@@ -5,9 +5,7 @@ let
     name = "org.vpsadminos/proxy";
   };
 
-  images = import ../../../lib/images.nix {
-    inherit config lib pkgs confDir confLib confData;
-  };
+  images = import ../../../lib/images.nix { inherit config lib pkgs; };
 
   isoImages = [ images.vpsadminosISO ];
 

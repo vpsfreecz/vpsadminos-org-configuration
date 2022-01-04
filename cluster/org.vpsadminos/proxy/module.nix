@@ -9,5 +9,6 @@
       v6 = [ { address = "2a03:3b40:fe:48::1"; prefix = 64; } ];
     };
     services.node-exporter = {};
+    tags = [ "target" ];
   };
 }

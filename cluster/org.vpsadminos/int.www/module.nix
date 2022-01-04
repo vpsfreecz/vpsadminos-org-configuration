@@ -9,5 +9,6 @@
       nginx = {};
       node-exporter = {};
     };
+    tags = [ "target" ];
   };
 }

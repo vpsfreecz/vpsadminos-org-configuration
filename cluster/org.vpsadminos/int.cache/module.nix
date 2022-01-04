@@ -9,5 +9,6 @@
       nix-serve = {};
       node-exporter = {};
     };
+    tags = [ "target" ];
   };
 }

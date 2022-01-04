@@ -19,9 +19,14 @@ let
     name="vpsadminos-${osBuild.config.system.osLabel}-$arch.iso"
     srciso="${osBuild.config.system.build.isoImage}/iso/vpsadminos.iso"
     dstiso="${httpRoot}/$name"
+    dstsum="''${dstiso}.sha256"
 
-    cp "$srciso" "$dstiso"
-    cp "${sha256 name osBuild.config.system.build.isoImage}" "''${dstiso}.sha256"
+    [ ! -f "$dstiso" ] \
+      && cp "$srciso" "$dstiso"
+
+    [ ! -f "$dstsum" ] \
+      && cp "${sha256 name osBuild.config.system.build.isoImage}" "$dstsum"
+
     ln -sf "$name" "${httpRoot}/vpsadminos-latest-$arch.iso"
     ln -sf "''${name}.sha256" "${httpRoot}/vpsadminos-latest-$arch.iso.sha256"
   '';

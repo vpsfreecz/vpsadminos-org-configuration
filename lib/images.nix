@@ -30,19 +30,14 @@ let
     vpsadmin = args.vpsadmin or null;
   };
 
-  vpsadminosBuild = args: (vpsadminos args).config.system.build;
+in {
+  vpsadminos = vpsadminos {
+    modules = [{
+      imports = [
+        <vpsadminos/os/configs/iso.nix>
+      ];
 
-in rec {
-  vpsadminosISO =
-    let
-      build = vpsadminosBuild {
-        modules = [{
-          imports = [
-            <vpsadminos/os/configs/iso.nix>
-          ];
-
-          system.secretsDir = null;
-        }];
-      };
-    in build.isoImage;
+      system.secretsDir = null;
+    }];
+  };
 }

@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  cluster."org.vpsadminos/containers/int.www" = rec {
+  cluster."org.vpsadminos/int.www" = rec {
     spin = "nixos";
     swpins.channels = [ "nixos-stable" "os-staging" "os-runtime-deps" ];
     host = { name = "www"; domain = "int.vpsadminos.org"; };

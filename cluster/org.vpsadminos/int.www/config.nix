@@ -2,7 +2,7 @@
 let
   proxy = confLib.findConfig {
     cluster = config.cluster;
-    name = "org.vpsadminos/containers/proxy";
+    name = "org.vpsadminos/proxy";
   };
 
   docsOs = swpins.vpsadminos-runtime-deps;
@@ -121,8 +121,8 @@ let
 in
 {
   imports = [
-    ../../../../environments/base.nix
-    ../../../../profiles/ct.nix
+    ../../../environments/base.nix
+    ../../../profiles/ct.nix
   ];
 
   networking = {

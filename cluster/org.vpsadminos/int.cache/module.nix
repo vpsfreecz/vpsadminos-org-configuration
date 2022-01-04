@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  cluster."org.vpsadminos/containers/int.cache" = rec {
+  cluster."org.vpsadminos/int.cache" = rec {
     spin = "nixos";
     swpins.channels = [ "nixos-stable" "os-staging" ];
     host = { name = "cache"; domain = "int.vpsadminos.org"; };

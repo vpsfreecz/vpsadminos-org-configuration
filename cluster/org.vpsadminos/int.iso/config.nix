@@ -2,10 +2,10 @@
 let
   proxy = confLib.findConfig {
     cluster = config.cluster;
-    name = "org.vpsadminos/containers/proxy";
+    name = "org.vpsadminos/proxy";
   };
 
-  images = import ../../../../lib/images.nix {
+  images = import ../../../lib/images.nix {
     inherit config lib pkgs confDir confLib confData;
   };
 
@@ -22,8 +22,8 @@ let
   '';
 in {
   imports = [
-    ../../../../environments/base.nix
-    ../../../../profiles/ct.nix
+    ../../../environments/base.nix
+    ../../../profiles/ct.nix
   ];
 
   networking = {

@@ -2,27 +2,27 @@
 let
   cache = confLib.findConfig {
     cluster = config.cluster;
-    name = "org.vpsadminos/containers/int.cache";
+    name = "org.vpsadminos/int.cache";
   };
 
   images = confLib.findConfig {
     cluster = config.cluster;
-    name = "org.vpsadminos/containers/int.images";
+    name = "org.vpsadminos/int.images";
   };
 
   iso = confLib.findConfig {
     cluster = config.cluster;
-    name = "org.vpsadminos/containers/int.iso";
+    name = "org.vpsadminos/int.iso";
   };
 
   www = confLib.findConfig {
     cluster = config.cluster;
-    name = "org.vpsadminos/containers/int.www";
+    name = "org.vpsadminos/int.www";
   };
 in {
   imports = [
-    ../../../../environments/base.nix
-    ../../../../profiles/ct.nix
+    ../../../environments/base.nix
+    ../../../profiles/ct.nix
   ];
 
   networking = {

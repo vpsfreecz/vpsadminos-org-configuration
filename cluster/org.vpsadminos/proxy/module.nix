@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  cluster."org.vpsadminos/containers/proxy" = rec {
+  cluster."org.vpsadminos/proxy" = rec {
     spin = "nixos";
     swpins.channels = [ "nixos-stable" "os-staging" ];
     host = { name = "proxy"; domain = "vpsadminos.org"; };

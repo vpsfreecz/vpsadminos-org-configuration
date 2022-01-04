@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  cluster."org.vpsadminos/containers/int.images" = rec {
+  cluster."org.vpsadminos/int.images" = rec {
     spin = "nixos";
     swpins.channels = [ "nixos-stable" "os-staging" ];
     host = { name = "images"; domain = "int.vpsadminos.org"; };

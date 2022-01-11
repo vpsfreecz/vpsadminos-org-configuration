@@ -2,7 +2,7 @@ rec {
   admins =
     aither.all
     ++
-    [ snajpa ];
+    [ martyet snajpa ];
 
   builders = [
     builder-int-vpsadminos-org
@@ -13,6 +13,8 @@ rec {
 
     all = [ ws ];
   };
+
+  martyet = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDP3Q9jQbk3X43Sv6yHFmnqzqBuYudbhdg/QHPbMaNBY5F9JPH0ThO4OdUI8nrMRaLhNFptEano/vSR+2/yPQJPtLoLArMBJHgWZ3NKgGsKuiCW8lIIWqagHVQQOsdUd/pizqTWI/G8yf4RIDllB6PDxGIcB++HIW9LVmOoGI0Fg+3LmnlhnQV81mPk2/9DKCQl2lnG1JQ3/e/851c0qaYVSW0KbQy5Br6JTh2mcUJO4FvtHCNsKW+s/bug23zMH/4rvo2CXsJbR+HNnAjS/OzPXz7BPunsU0GrJ3WpogSC4eFPN5Mtv4gz5pXZnAon0PAdyDxYoynRCd+ULjiSI6t1DOXg52SNFatdqUHVMKBi3+M7VTLSUgXtEEpA9cgRAyY4KYQ3SYfjuCP8DDNn/8s+k+tPdNHcafmE+iJ12IuFWXL+LCWvR0/K/iVbtLPBQW1Y5V0uoLXsmFeAVo8qny670sPJVl1a2AHkgccfw3tzC1Xk5bGBYgMEVxNLIQKu4DyPy1MiZi8oBgpAae1XDffrQ7hWWe3Tri+7VLrmJEC1/fRRzy7QwpTP9WOEMa8+ZQAf8ZNZvl9OcoS4axEhw7rnnJNTHWdetwxnhiqo7QsE7EL0+MC4geSadDnQKtzWdPBa3Z1N0XaxvWMhOTMpCaXnIy1wGfNnhe4xPvAyLr/a2Q== root@martyet-bjorn";
 
   snajpa = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK29/yHdxakVaJMYiIMBKb8nYGaj/gSQI4zErNVcbvsUpSiQuD+TLhIWYxR79D9rHFypMRm6aaEbeMHtw+TRjoI= snajpa@snajpaStation";
 

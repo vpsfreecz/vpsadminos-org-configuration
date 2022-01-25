@@ -8,6 +8,7 @@ in {
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix
+    ../../../configs/nginx-fancyindex.nix
   ];
 
   networking = {
@@ -28,9 +29,11 @@ in {
       "images.vpsadminos.org" = {
         root = "/srv/images";
         locations = {
-          "/" = {
-            extraConfig = "autoindex on;";
-          };
+          "/fancyindex/".alias = (toString pkgs.fancyIndexTheme) + "/";
+
+          "/".extraConfig = ''
+            include ${pkgs.fancyIndexTheme}/fancyindex.conf;
+          '';
         };
       };
     };

@@ -43,6 +43,7 @@ in {
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix
+    ../../../configs/nginx-fancyindex.nix
   ];
 
   networking = {
@@ -63,9 +64,11 @@ in {
       "iso.vpsadminos.org" = {
         root = httpRoot;
         locations = {
-          "/" = {
-            extraConfig = "autoindex on;";
-          };
+          "/fancyindex/".alias = (toString pkgs.fancyIndexTheme) + "/";
+
+          "/".extraConfig = ''
+            include ${pkgs.fancyIndexTheme}/fancyindex.conf;
+          '';
         };
       };
     };

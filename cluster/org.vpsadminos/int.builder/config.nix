@@ -4,8 +4,12 @@
     ../../../environments/base.nix
     ../../../profiles/ct.nix
   ];
-  
+
   environment.systemPackages = with pkgs; [
     git
+  ];
+
+  nix.sandboxPaths = [
+    "/nix/var/cache/ccache"
   ];
 }

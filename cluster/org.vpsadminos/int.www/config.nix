@@ -1,4 +1,5 @@
 { config, pkgs, lib, confLib, swpins, ... }:
+with lib;
 let
   proxy = confLib.findConfig {
     cluster = config.cluster;
@@ -53,38 +54,75 @@ let
     popd
   '';
 
-  buildMan = component: pkgs.runCommand "${lib.replaceStrings ["/"] ["_"] component}_man" {
+  md2manRakefile = pkgs.writeText "vpsadminos-md2man.rakefile" ''
+    require 'md2man/rakefile'
+    require 'md2man/roff/engine'
+    require 'md2man/html/engine'
+
+    # Override markdown engine to add extra parameter
+    [Md2Man::Roff, Md2Man::HTML].each do |mod|
+      mod.send(:remove_const, :ENGINE)
+      mod.send(:const_set, :ENGINE, Redcarpet::Markdown.new(mod.const_get(:Engine),
+        tables: true,
+        autolink: true,
+        superscript: true,
+        strikethrough: true,
+        no_intra_emphasis: false,
+        fenced_code_blocks: true,
+
+        # This option is needed for command options to be rendered property
+        disable_indented_code_blocks: true,
+      ))
+    end
+  '';
+
+  manPaths = [
+    "${swpins.vpsadminos}/osctl/man"
+    "${swpins.vpsadminos}/osctl-exportfs/man"
+    "${swpins.vpsadminos}/osctl-image/man"
+    "${swpins.vpsadminos}/osctl-repo/man"
+    "${swpins.vpsadminos}/converter/man"
+    "${swpins.vpsadminos}/osup/man"
+    "${swpins.vpsadminos}/svctl/man"
+    "${swpins.vpsadminos}/test-runner/man"
+  ];
+
+  buildMan = pkgs.runCommand "vpsadminos-webmanuals" {
     buildInputs = [ docsPkgs.osctl-env-exec pkgs.git ];
   } ''
     # Necessary for unicode characters in manpages
     export LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive"
     export LANG="en_US.UTF-8"
 
-    mkdir man
-    cp -R ${swpins.vpsadminos} vpsadminos
-    chmod -R +w vpsadminos
-    pushd vpsadminos/${component}
-      touch man/style.css
-      osctl-env-exec rake md2man:web
-      mkdir $out
-      cp -R man/* $out/
-    popd
-    # hack around md2man unable to generate style.css due to creating
-    # it readonly, which we workaround with touch which results in empty style..
-    rm -rf $out/style.css
-    cp $(osctl-env-exec 'bash -c "echo $GEM_HOME"')/gems/md2man-*/lib/md2man/rakefile/style.css $out/style.css
-  '';
-
-  man = pkgs.runCommand "manroot" { } ''
     mkdir $out
-    ln -s ${buildMan "osctl"} $out/osctl
-    ln -s ${buildMan "osctl-exportfs"} $out/osctl-exportfs
-    ln -s ${buildMan "osctl-image"} $out/osctl-image
-    ln -s ${buildMan "osctl-repo"} $out/osctl-repo
-    ln -s ${buildMan "converter"} $out/converter
-    ln -s ${buildMan "osup"} $out/osup
-    ln -s ${buildMan "svctl"} $out/svctl
-    ln -s ${buildMan "test-runner"} $out/test-runner
+    ln -s ${md2manRakefile} $out/Rakefile
+
+    mkdir $out/man
+
+    for manPath in ${concatStringsSep " " manPaths} ; do
+      cp -r $manPath/* $out/man/
+
+      # Since we're copying from Nix store, the copied files are all read-only,
+      # but we need write access.
+      chmod -R +w $out/man
+    done
+
+    # md2man copies style.css from its gemdir in Nix store to man/style.css
+    # and later tries to open it and write to it. That doesn't work, because
+    # the copied file is read-only. So we create an empty man/style.css to avoid
+    # md2man touching it and after the manpages are generated, we copy it
+    # in place ourselves.
+    touch $out/man/style.css
+
+    cd $out
+    osctl-env-exec rake md2man:web
+
+    rm -f $out/man/style.css
+    mv $out/man/* $out/
+    cp $(osctl-env-exec 'bash -c "echo $GEM_HOME"')/gems/md2man-*/lib/md2man/rakefile/style.css $out/style.css
+
+    rmdir $out/man
+    rm -f $out/Rakefile
   '';
 
   refGems = pkgs.runCommand "ref-gems" {
@@ -146,7 +184,7 @@ in
       };
 
       "man.vpsadminos.org" = {
-        root = man;
+        root = buildMan;
         locations = {
           "/" = {
             extraConfig = "autoindex on;";

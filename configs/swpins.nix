@@ -19,7 +19,7 @@ let
   };
 in {
   confctl.swpins.channels = {
-    nixos-stable = { nixpkgs = nixpkgsBranch "nixos-21.11"; };
+    nixos-stable = { nixpkgs = nixpkgsBranch "nixos-22.05"; };
 
     os-staging = { vpsadminos = vpsadminosBranch "staging"; };
 

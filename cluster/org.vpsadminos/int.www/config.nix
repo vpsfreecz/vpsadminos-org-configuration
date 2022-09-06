@@ -84,6 +84,7 @@ let
     "${swpins.vpsadminos}/converter/man"
     "${swpins.vpsadminos}/osup/man"
     "${swpins.vpsadminos}/svctl/man"
+    "${swpins.vpsadminos}/osvm/man"
     "${swpins.vpsadminos}/test-runner/man"
   ];
 
@@ -132,7 +133,7 @@ let
     chmod -R +w vpsadminos
     mkdir $out
     pushd vpsadminos
-      for gem in libosctl osctl osctl-exportfs osctl-image osctl-repo osctld converter svctl test-runner; do
+      for gem in libosctl osctl osctl-exportfs osctl-image osctl-repo osctld converter svctl osvm test-runner; do
         pushd $gem
           mkdir -p $out/$gem
           YARD_OUTPUT=$out/$gem osctl-env-exec rake yard

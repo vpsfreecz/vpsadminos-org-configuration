@@ -12,4 +12,6 @@
   nix.sandboxPaths = [
     "/nix/var/cache/ccache"
   ];
+
+  system.stateVersion = "22.05";
 }

@@ -40,4 +40,6 @@ in {
   users.groups.push = {};
 
   nix.trustedUsers = [ "root" "push" ];
+
+  system.stateVersion = "22.05";
 }

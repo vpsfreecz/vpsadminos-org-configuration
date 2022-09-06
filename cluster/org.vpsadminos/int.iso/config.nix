@@ -83,4 +83,6 @@ in {
       ExecStart = deployIsoImages;
     };
   };
+
+  system.stateVersion = "22.05";
 }

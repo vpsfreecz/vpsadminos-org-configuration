@@ -133,7 +133,7 @@ let
     chmod -R +w vpsadminos
     mkdir $out
     pushd vpsadminos
-      for gem in libosctl osctl osctl-exportfs osctl-image osctl-repo osctld converter svctl osvm test-runner; do
+      for gem in libosctl osctl osctl-exportfs osctl-image osctl-repo osctld converter osup svctl osvm test-runner; do
         pushd $gem
           mkdir -p $out/$gem
           YARD_OUTPUT=$out/$gem osctl-env-exec rake yard

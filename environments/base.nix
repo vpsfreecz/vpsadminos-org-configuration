@@ -12,7 +12,7 @@ with lib;
 
   nixpkgs.overlays = import ../overlays;
 
-  nix.useSandbox = true;
+  nix.settings.sandbox = true;
 
   nix.nixPath = [
     "nixpkgs=${swpins.nixpkgs}"

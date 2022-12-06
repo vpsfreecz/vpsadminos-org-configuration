@@ -39,7 +39,7 @@ in {
 
   users.groups.push = {};
 
-  nix.trustedUsers = [ "root" "push" ];
+  nix.settings.trusted-users = [ "root" "push" ];
 
   system.stateVersion = "22.05";
 }

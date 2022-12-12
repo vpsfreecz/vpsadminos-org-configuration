@@ -25,13 +25,18 @@ in {
       node = {
         enable = true;
         port = exporterPort;
-        extraFlags = [ "--collector.textfile.directory=/run/metrics" ];
-        enabledCollectors = [
-          "vmstat"
-          "interrupts"
-          "textfile"
-          "processes"
-        ] ++ (optionals (confMachine.spin == "nixos") [ "systemd" "logind" ]);
+        extraFlags = [
+          "--collector.disable-defaults"
+          "--collector.filesystem"
+          "--collector.loadavg"
+          "--collector.meminfo"
+          "--collector.os"
+          "--collector.systemd"
+          "--collector.logind"
+          "--collector.uname"
+          "--collector.textfile"
+          "--collector.textfile.directory=/run/metrics"
+        ];
       };
     };
   };

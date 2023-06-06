@@ -16,7 +16,7 @@ let
 
   addIso = name: osBuild: ''
     arch="${osBuild.config.nixpkgs.localSystem.system}"
-    name="vpsadminos-${osBuild.config.system.osLabel}-$arch.iso"
+    name="vpsadminos-${osBuild.config.system.vpsadminos.label}-$arch.iso"
     srciso="${osBuild.config.system.build.isoImage}/iso/vpsadminos.iso"
     dstiso="${httpRoot}/$name"
     dstsum="''${dstiso}.sha256"

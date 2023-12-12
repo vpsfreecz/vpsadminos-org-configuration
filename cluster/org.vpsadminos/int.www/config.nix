@@ -143,18 +143,18 @@ let
     popd
   '';
 
-  osManual = import "${swpins.vpsadminos}/os/manual" { inherit pkgs; };
+  # osManual = import "${swpins.vpsadminos}/os/manual" { inherit pkgs; };
 
-  refOs = pkgs.runCommand "ref-os" {} ''
-   mkdir $out
-   ln -s ${osManual.html}/share/doc/vpsadminos $out/os
-  '';
+  # refOs = pkgs.runCommand "ref-os" {} ''
+  #  mkdir $out
+  #  ln -s ${osManual.html}/share/doc/vpsadminos $out/os
+  # '';
 
   ref = pkgs.buildEnv {
     name = "refroot";
     paths = [
       refGems
-      refOs
+      # refOs
     ];
   };
 in

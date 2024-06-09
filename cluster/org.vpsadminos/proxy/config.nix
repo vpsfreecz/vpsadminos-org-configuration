@@ -1,21 +1,21 @@
 { config, pkgs, lib, confLib, ... }:
 let
-  cache = confLib.findConfig {
+  cache = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/int.cache";
   };
 
-  images = confLib.findConfig {
+  images = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/int.images";
   };
 
-  iso = confLib.findConfig {
+  iso = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/int.iso";
   };
 
-  www = confLib.findConfig {
+  www = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/int.www";
   };

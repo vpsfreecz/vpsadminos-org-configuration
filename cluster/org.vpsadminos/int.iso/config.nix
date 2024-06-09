@@ -1,7 +1,7 @@
 { config, pkgs, lib, confDir, confLib, confData, ... }:
 with lib;
 let
-  proxy = confLib.findConfig {
+  proxy = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/proxy";
   };

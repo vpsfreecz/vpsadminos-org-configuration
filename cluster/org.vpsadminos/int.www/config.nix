@@ -6,7 +6,7 @@ let
     name = "org.vpsadminos/proxy";
   };
 
-  docsOs = swpins.vpsadminos-runtime-deps;
+  docsOs = swpins.vpsadminos;
 
   docsPkgs = import swpins.nixpkgs {
     overlays = [

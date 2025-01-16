@@ -33,7 +33,5 @@ in {
     nixos-stable = { nixpkgs = nixpkgsBranch "nixos-24.11"; };
 
     os-staging = { vpsadminos = vpsadminosBranch "staging"; };
-
-    os-runtime-deps = { vpsadminos-runtime-deps = vpsadminosBranch "osctl-env-exec"; };
   };
 }

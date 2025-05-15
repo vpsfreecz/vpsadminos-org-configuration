@@ -32,8 +32,7 @@ in {
     group = "push";
     shell = pkgs.bash;
     openssh.authorizedKeys.keys = [
-      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPgg6hoXJIMRJZiVULL8Ve3NweaiHPymiMgSQxFt7pFaLqACK4kxj+gKBg89V6TtEqHeHcI8fOV1ildGzzXNCGI= bbworker@nixos01.int.vpsadminos.org"
-      "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLQOOwoJuS4XQ3Aa54S2yC+aN+wLAgyKnSqFew2N8jbgpL8LnjGRVkOtlCgBDV5tqHpUqx0vk1QgMOgQvQju/oY= bbworker@nixos02.bb.int.vpsadminos.org"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHA0ZO7G+prBuHdY0Az5/dQJB71HrZtpKktxH8Q1g9uo root@gh-runner"
     ];
   };
 

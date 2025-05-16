@@ -17,13 +17,23 @@
     user = "github-runner";
     group = "github-runner";
     serviceOverrides = {
-      PrivateDevices = false; # allow access to /dev/kvm
+      # Allow access to /dev/kvm
+      PrivateDevices = false;
+
+      # Permissions for virtiofsd
+      RestrictNamespaces = false;
+      NoNewPrivileges = false;
+      PrivateUsers = false;
+      SystemCallFilter = [
+        ""
+      ];
     };
   };
 
   users = {
     users.github-runner = {
       isSystemUser = true;
+      shell = pkgs.bash;
       group = "github-runner";
       subUidRanges = [
         {

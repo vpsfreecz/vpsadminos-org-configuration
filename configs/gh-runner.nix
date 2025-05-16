@@ -14,8 +14,25 @@
       gnumake
       openssh
     ];
+    user = "github-runner";
+    group = "github-runner";
     serviceOverrides = {
-      PrivateDevices = false;
+      PrivateDevices = false; # allow access to /dev/kvm
     };
+  };
+
+  users = {
+    users.github-runner = {
+      isSystemUser = true;
+      group = "github-runner";
+      subUidRanges = [
+        {
+          count = 65536;
+          startUid = 100000;
+        }
+      ];
+    };
+
+    groups.github-runner = {};
   };
 }

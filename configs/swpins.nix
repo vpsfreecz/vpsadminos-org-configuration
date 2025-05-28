@@ -30,7 +30,7 @@ in {
   };
 
   confctl.swpins.channels = {
-    nixos-stable = { nixpkgs = nixpkgsBranch "nixos-24.11"; };
+    nixos-stable = { nixpkgs = nixpkgsBranch "nixos-25.05"; };
 
     os-staging = { vpsadminos = vpsadminosBranch "staging"; };
   };

@@ -1,7 +1,7 @@
 name: Daily update
 on:
   schedule:
-    - cron: '40 6 * * *'
+    - cron: '40 4 * * *'
 
 permissions:
   contents: write

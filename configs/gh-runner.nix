@@ -10,6 +10,11 @@
     dates = "weekly";
   };
 
+  networking.firewall.extraCommands = ''
+    # socket network for vpsAdminOS test-runner
+    iptables -A nixos-fw -m pkttype --pkt-type multicast -p udp --dport 10000:30000 -j ACCEPT
+  '';
+
   services.github-runners.runner = {
     enable = true;
     tokenFile = "/private/gh-runner/token.txt";

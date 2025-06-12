@@ -85,28 +85,38 @@ in {
 
         profile_dir = '/nix/var/nix/profiles'
         regexps = [
-          /\Aci-.+-profile\z/
+          /\Aci-(.+)-profile\z/
         ]
-        days = 365
-        profiles = []
+        profiles = {}
 
-        # Delete old generations
+        # Find existing profiles
         Dir.entries(profile_dir).each do |v|
           next if %w[. ..].include?(v) || regexps.detect { |rx| rx =~ v }.nil?
 
-          profiles << v
+          name = ::Regexp.last_match(1)
+          days =
+            if name == 'staging' || name.start_with?('staging-kernel-')
+              365
+            else
+              90
+            end
 
-          puts "Deleting old generations of profile #{v}"
+          profiles[v] = days
+        end
 
-          unless Kernel.system('nix-env', '-p', File.join(profile_dir, v), '--delete-generations', "#{days}d")
-            raise "Failed to delete generations of profile #{v}"
+        # Delete old generations
+        profiles.each do |profile, days|
+          puts "Deleting old generations of profile #{profile} (#{days} days)"
+
+          unless Kernel.system('nix-env', '-p', File.join(profile_dir, profile), '--delete-generations', "#{days}d")
+            raise "Failed to delete generations of profile #{profile}"
           end
         end
 
         # Delete old profiles
         now = Time.now
 
-        profiles.each do |profile|
+        profiles.each do |profile, days|
           path = File.join(profile_dir, profile)
           generations = `nix-env -p #{path} --list-generations`.strip.split("\n")
 
@@ -117,7 +127,7 @@ in {
           generations.each do |gen|
             n, = gen.split
 
-            unless Kernel.system('nix-env', '-p', File.join(profile_dir, v), '--delete-generations', n)
+            unless Kernel.system('nix-env', '-p', File.join(profile_dir, profile), '--delete-generations', n)
               raise "Failed to delete generation #{n.inspect} of profile #{profile.inspect}"
             end
           end

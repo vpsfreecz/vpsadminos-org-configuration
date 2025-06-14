@@ -19,6 +19,9 @@ in {
     networking.firewall.extraCommands = ''
       # Allow access to node-exporter from mon1.int.prg.vpsfree.cz
       iptables -A nixos-fw -p tcp -m tcp -s 172.16.4.10 --dport ${toString exporterPort} -j nixos-fw-accept
+
+      # Allow access to node-exporter from mon2.int.prg.vpsfree.cz
+      iptables -A nixos-fw -p tcp -m tcp -s 172.16.4.18 --dport ${toString exporterPort} -j nixos-fw-accept
     '';
 
     services.prometheus.exporters = {

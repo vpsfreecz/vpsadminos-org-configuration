@@ -1,7 +1,7 @@
-name: Daily update
+name: Weekly update
 on:
   schedule:
-    - cron: '40 4 * * *'
+    - cron: '40 3 * * 0'
 
 permissions:
   contents: write
@@ -42,8 +42,7 @@ jobs:
           sudo mkdir /nix/var/nix/gcroots/per-user/$USER
           sudo chown $USER /nix/var/nix/gcroots/per-user/$USER
 
-          bundle exec confctl swpins channel update --commit --no-changelog nixos-stable
-          bundle exec confctl swpins channel update --commit os-staging
+          bundle exec confctl swpins core update --commit --no-changelog
 
       - name: Push updates
         run: |

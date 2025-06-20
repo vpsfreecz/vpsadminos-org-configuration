@@ -70,7 +70,19 @@ in {
       "cache.vpsadminos.org" = {
         enableACME = true;
         forceSSL = true;
-        locations."/".proxyPass = "http://${cache.services.nix-serve.address}:${toString cache.services.nix-serve.port}";
+        locations."/" = {
+          proxyPass = "http://${cache.services.nix-serve.address}:${toString cache.services.nix-serve.port}";
+          extraConfig = ''
+            proxy_intercept_errors on;
+            error_page 502 503 504 =404 /404.html;
+          '';
+        };
+        locations."/404.html" = {
+          return = "404 'File not found.'";
+          extraConfig = ''
+            internal;
+          '';
+        };
       };
     };
   };

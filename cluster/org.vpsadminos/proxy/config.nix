@@ -84,6 +84,15 @@ in {
           '';
         };
       };
+
+      "check-online.vpsadminos.org" = {
+        enableACME = true;
+        addSSL = true;
+        root = pkgs.runCommand "check-online" {} ''
+          mkdir $out
+          echo online > $out/index.html
+        '';
+      };
     };
   };
 

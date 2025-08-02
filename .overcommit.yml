@@ -1,0 +1,6 @@
+PreCommit:
+  Nixfmt:
+    enabled: true
+CommitMsg:
+  CapitalizedSubject:
+    enabled: false

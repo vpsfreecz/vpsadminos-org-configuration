@@ -1,2 +1,3 @@
-(import ./cluster.nix) ++ [
+(import ./cluster.nix)
+++ [
 ]

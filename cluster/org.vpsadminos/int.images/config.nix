@@ -1,10 +1,17 @@
-{ config, pkgs, lib, confLib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  confLib,
+  ...
+}:
 let
   proxy = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/proxy";
   };
-in {
+in
+{
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix

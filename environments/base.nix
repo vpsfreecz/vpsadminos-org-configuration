@@ -1,11 +1,25 @@
-{ config, pkgs, lib, confData, swpins, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  confData,
+  swpins,
+  ...
+}:
 with lib;
 {
   time.timeZone = "Europe/Amsterdam";
 
   networking = {
-    search = ["vpsfree.cz" "prg.vpsfree.cz" "base48.cz"];
-    nameservers = [ "172.16.9.90" "1.1.1.1" ];
+    search = [
+      "vpsfree.cz"
+      "prg.vpsfree.cz"
+      "base48.cz"
+    ];
+    nameservers = [
+      "172.16.9.90"
+      "1.1.1.1"
+    ];
   };
 
   services.openssh.enable = true;

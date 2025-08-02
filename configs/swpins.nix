@@ -17,7 +17,8 @@ let
       update.ref = "refs/heads/${branch}";
     };
   };
-in {
+in
+{
   confctl.swpins.core.pins = {
     nixpkgs = {
       type = "git-rev";
@@ -30,8 +31,12 @@ in {
   };
 
   confctl.swpins.channels = {
-    nixos-stable = { nixpkgs = nixpkgsBranch "nixos-25.05"; };
+    nixos-stable = {
+      nixpkgs = nixpkgsBranch "nixos-25.05";
+    };
 
-    os-staging = { vpsadminos = vpsadminosBranch "staging"; };
+    os-staging = {
+      vpsadminos = vpsadminosBranch "staging";
+    };
   };
 }

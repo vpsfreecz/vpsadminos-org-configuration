@@ -1,4 +1,10 @@
-{ config, pkgs, lib, confLib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  confLib,
+  ...
+}:
 let
   cache = confLib.findMetaConfig {
     cluster = config.cluster;
@@ -19,7 +25,8 @@ let
     cluster = config.cluster;
     name = "org.vpsadminos/int.www";
   };
-in {
+in
+{
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix
@@ -27,7 +34,8 @@ in {
 
   networking = {
     firewall.allowedTCPPorts = [
-      80 443 # nginx
+      80
+      443 # nginx
     ];
   };
 
@@ -52,19 +60,22 @@ in {
         ];
         enableACME = true;
         forceSSL = true;
-        locations."/".proxyPass = "http://${www.services.nginx.address}:${toString www.services.nginx.port}";
+        locations."/".proxyPass =
+          "http://${www.services.nginx.address}:${toString www.services.nginx.port}";
       };
 
       "images.vpsadminos.org" = {
         enableACME = true;
         forceSSL = true;
-        locations."/".proxyPass = "http://${images.services.nginx.address}:${toString images.services.nginx.port}";
+        locations."/".proxyPass =
+          "http://${images.services.nginx.address}:${toString images.services.nginx.port}";
       };
 
       "iso.vpsadminos.org" = {
         enableACME = true;
         forceSSL = true;
-        locations."/".proxyPass = "http://${iso.services.nginx.address}:${toString iso.services.nginx.port}";
+        locations."/".proxyPass =
+          "http://${iso.services.nginx.address}:${toString iso.services.nginx.port}";
       };
 
       "cache.vpsadminos.org" = {
@@ -88,7 +99,7 @@ in {
       "check-online.vpsadminos.org" = {
         enableACME = true;
         addSSL = true;
-        root = pkgs.runCommand "check-online" {} ''
+        root = pkgs.runCommand "check-online" { } ''
           mkdir $out
           echo online > $out/index.html
         '';

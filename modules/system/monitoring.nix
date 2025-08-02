@@ -1,10 +1,18 @@
-{ lib, config, pkgs, confMachine, confLib, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  confMachine,
+  confLib,
+  ...
+}:
 with lib;
 let
   cfg = config.system.monitoring;
 
   exporterPort = confMachine.services.node-exporter.port;
-in {
+in
+{
   options = {
     system.monitoring = {
       enable = mkOption {

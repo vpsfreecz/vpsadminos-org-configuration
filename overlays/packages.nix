@@ -1,5 +1,4 @@
-self: super:
-{
+self: super: {
   fancyIndexTheme = super.fetchFromGitHub {
     name = "fancyindex-theme";
     owner = "aither64";

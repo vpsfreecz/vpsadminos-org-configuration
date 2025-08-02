@@ -1,4 +1,10 @@
-{ config, pkgs, lib, confLib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  confLib,
+  ...
+}:
 let
   proxy = confLib.findMetaConfig {
     cluster = config.cluster;
@@ -19,7 +25,8 @@ let
     nix-env -p /nix/var/nix/profiles/ci-"$branch"-profile --set "$path"
     exit $?
   '';
-in {
+in
+{
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix
@@ -55,7 +62,7 @@ in {
     ];
   };
 
-  users.groups.push = {};
+  users.groups.push = { };
 
   security.sudo = {
     enable = true;
@@ -72,7 +79,10 @@ in {
     ];
   };
 
-  nix.settings.trusted-users = [ "root" "push" ];
+  nix.settings.trusted-users = [
+    "root"
+    "push"
+  ];
 
   systemd.services.ci-gc = {
     path = with pkgs; [

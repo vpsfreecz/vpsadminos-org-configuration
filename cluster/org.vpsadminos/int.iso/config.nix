@@ -1,4 +1,12 @@
-{ config, pkgs, lib, confDir, confLib, confData, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  confDir,
+  confLib,
+  confData,
+  ...
+}:
 with lib;
 let
   proxy = confLib.findMetaConfig {
@@ -10,9 +18,11 @@ let
 
   httpRoot = "/var/lib/vpsadminos-iso";
 
-  sha256 = name: isoBuild: pkgs.runCommand "${name}-sha256" {} ''
-    sha256sum ${isoBuild}/iso/vpsadminos.iso > $out
-  '';
+  sha256 =
+    name: isoBuild:
+    pkgs.runCommand "${name}-sha256" { } ''
+      sha256sum ${isoBuild}/iso/vpsadminos.iso > $out
+    '';
 
   addIso = name: osBuild: ''
     arch="${osBuild.config.nixpkgs.localSystem.system}"
@@ -39,7 +49,8 @@ let
 
     ${concatStringsSep "\n\n" (mapAttrsToList addIso images)}
   '';
-in {
+in
+{
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix

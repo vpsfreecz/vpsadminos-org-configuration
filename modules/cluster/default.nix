@@ -1,4 +1,9 @@
-{ config, lib, confLib, ... }@args:
+{
+  config,
+  lib,
+  confLib,
+  ...
+}@args:
 with lib;
 let
   topLevelConfig = config;
@@ -9,18 +14,21 @@ let
       options = {
         services = mkOption {
           type = types.attrsOf (types.submodule service);
-          default = {};
+          default = { };
           description = ''
             Services published by this machine
           '';
-          apply = mapAttrs (name: sv:
+          apply = mapAttrs (
+            name: sv:
             let
               def = topLevelConfig.serviceDefinitions.${name};
-            in {
+            in
+            {
               address = if isNull sv.address then config.addresses.primary.address else sv.address;
               port = if isNull sv.port then def.port else sv.port;
               monitor = if isNull sv.monitor then def.monitor else sv.monitor;
-            });
+            }
+          );
         };
       };
     };
@@ -55,7 +63,8 @@ let
       };
     };
 
-in {
+in
+{
   imports = [
     ../services/definitions.nix
   ];

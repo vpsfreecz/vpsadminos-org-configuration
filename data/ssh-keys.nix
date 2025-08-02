@@ -1,8 +1,8 @@
 rec {
-  admins =
-    aither.all
-    ++
-    [ martyet snajpa ];
+  admins = aither.all ++ [
+    martyet
+    snajpa
+  ];
 
   builders = [
     builder-int-vpsadminos-org

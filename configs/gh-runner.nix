@@ -53,6 +53,6 @@
       ];
     };
 
-    groups.github-runner = {};
+    groups.github-runner = { };
   };
 }

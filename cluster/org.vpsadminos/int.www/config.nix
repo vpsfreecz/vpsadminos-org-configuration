@@ -1,4 +1,11 @@
-{ config, pkgs, lib, confLib, swpins, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  confLib,
+  swpins,
+  ...
+}:
 with lib;
 let
   proxy = confLib.findMetaConfig {
@@ -29,23 +36,28 @@ let
     })();
   '';
 
-  docsSource = pkgs.runCommand "os-docs-src" {} ''
+  docsSource = pkgs.runCommand "os-docs-src" { } ''
     mkdir -p $out
     cp -r ${swpins.vpsadminos}/docs/. $out/
     mkdir -p $out/js
     ln -s ${trackingCode} $out/js/vpsfree-matomo.js
   '';
 
-  configOverride = pkgs.writeText "mkdocs-override.yml" (builtins.toJSON {
-    docs_dir = docsSource;
-    extra_javascript = [ "js/vpsfree-matomo.js" ];
-  });
+  configOverride = pkgs.writeText "mkdocs-override.yml" (
+    builtins.toJSON {
+      docs_dir = docsSource;
+      extra_javascript = [ "js/vpsfree-matomo.js" ];
+    }
+  );
 
-  mkdocsConfig = pkgs.runCommand "mkdocs-merged.yml" {
-    buildInputs = [ docsPkgs.yaml-merge ];
-  } ''
-    yaml-merge ${swpins.vpsadminos}/mkdocs.yml ${configOverride} > $out
-  '';
+  mkdocsConfig =
+    pkgs.runCommand "mkdocs-merged.yml"
+      {
+        buildInputs = [ docsPkgs.yaml-merge ];
+      }
+      ''
+        yaml-merge ${swpins.vpsadminos}/mkdocs.yml ${configOverride} > $out
+      '';
 
   docs = pkgs.runCommand "docsroot" { buildInputs = [ docsPkgs.mkdocs ]; } ''
     mkdir -p $out
@@ -88,60 +100,72 @@ let
     "${swpins.vpsadminos}/test-runner/man"
   ];
 
-  buildMan = pkgs.runCommand "vpsadminos-webmanuals" {
-    buildInputs = [ docsPkgs.osctl-env-exec pkgs.git ];
-  } ''
-    # Necessary for unicode characters in manpages
-    export LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive"
-    export LANG="en_US.UTF-8"
+  buildMan =
+    pkgs.runCommand "vpsadminos-webmanuals"
+      {
+        buildInputs = [
+          docsPkgs.osctl-env-exec
+          pkgs.git
+        ];
+      }
+      ''
+        # Necessary for unicode characters in manpages
+        export LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive"
+        export LANG="en_US.UTF-8"
 
-    mkdir $out
-    ln -s ${md2manRakefile} $out/Rakefile
+        mkdir $out
+        ln -s ${md2manRakefile} $out/Rakefile
 
-    mkdir $out/man
+        mkdir $out/man
 
-    for manPath in ${concatStringsSep " " manPaths} ; do
-      cp -r $manPath/* $out/man/
+        for manPath in ${concatStringsSep " " manPaths} ; do
+          cp -r $manPath/* $out/man/
 
-      # Since we're copying from Nix store, the copied files are all read-only,
-      # but we need write access.
-      chmod -R +w $out/man
-    done
+          # Since we're copying from Nix store, the copied files are all read-only,
+          # but we need write access.
+          chmod -R +w $out/man
+        done
 
-    # md2man copies style.css from its gemdir in Nix store to man/style.css
-    # and later tries to open it and write to it. That doesn't work, because
-    # the copied file is read-only. So we create an empty man/style.css to avoid
-    # md2man touching it and after the manpages are generated, we copy it
-    # in place ourselves.
-    touch $out/man/style.css
+        # md2man copies style.css from its gemdir in Nix store to man/style.css
+        # and later tries to open it and write to it. That doesn't work, because
+        # the copied file is read-only. So we create an empty man/style.css to avoid
+        # md2man touching it and after the manpages are generated, we copy it
+        # in place ourselves.
+        touch $out/man/style.css
 
-    cd $out
-    osctl-env-exec rake md2man:web
+        cd $out
+        osctl-env-exec rake md2man:web
 
-    rm -f $out/man/style.css
-    mv $out/man/* $out/
-    cp $(osctl-env-exec 'bash -c "echo $GEM_HOME"')/gems/md2man-*/lib/md2man/rakefile/style.css $out/style.css
+        rm -f $out/man/style.css
+        mv $out/man/* $out/
+        cp $(osctl-env-exec 'bash -c "echo $GEM_HOME"')/gems/md2man-*/lib/md2man/rakefile/style.css $out/style.css
 
-    rmdir $out/man
-    rm -f $out/Rakefile
-  '';
+        rmdir $out/man
+        rm -f $out/Rakefile
+      '';
 
-  refGems = pkgs.runCommand "ref-gems" {
-    buildInputs = [ docsPkgs.osctl-env-exec pkgs.git ];
-  } ''
-    cp -R ${swpins.vpsadminos} vpsadminos
-    chmod -R +w vpsadminos
-    mkdir $out
-    pushd vpsadminos
-      for gem in libosctl osctl osctl-exportfs osctl-image osctl-repo osctld converter osup svctl osvm test-runner; do
-        pushd $gem
-          mkdir -p $out/$gem
-          YARD_OUTPUT=$out/$gem osctl-env-exec rake yard
-          test -f $out/$gem/index.html || (echo "gem $gem didn't produce index.html" && exit 1);
+  refGems =
+    pkgs.runCommand "ref-gems"
+      {
+        buildInputs = [
+          docsPkgs.osctl-env-exec
+          pkgs.git
+        ];
+      }
+      ''
+        cp -R ${swpins.vpsadminos} vpsadminos
+        chmod -R +w vpsadminos
+        mkdir $out
+        pushd vpsadminos
+          for gem in libosctl osctl osctl-exportfs osctl-image osctl-repo osctld converter osup svctl osvm test-runner; do
+            pushd $gem
+              mkdir -p $out/$gem
+              YARD_OUTPUT=$out/$gem osctl-env-exec rake yard
+              test -f $out/$gem/index.html || (echo "gem $gem didn't produce index.html" && exit 1);
+            popd
+          done
         popd
-      done
-    popd
-  '';
+      '';
 
   # osManual = import "${swpins.vpsadminos}/os/manual" { inherit pkgs; };
 

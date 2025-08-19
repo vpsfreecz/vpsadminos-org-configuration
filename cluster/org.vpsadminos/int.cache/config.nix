@@ -137,9 +137,8 @@ in
           generations.each do |gen|
             n, = gen.split
 
-            unless Kernel.system('nix-env', '-p', File.join(profile_dir, profile), '--delete-generations', n)
-              raise "Failed to delete generation #{n.inspect} of profile #{profile.inspect}"
-            end
+            # nix-env refuses to delete the current generation, so we delete them manually
+            File.unlink(File.join(profile_dir, "#{profile}-#{n}-link"))
           end
 
           File.unlink(path)

@@ -32,7 +32,7 @@ in
 
   confctl.swpins.channels = {
     nixos-stable = {
-      nixpkgs = nixpkgsBranch "nixos-25.05";
+      nixpkgs = nixpkgsBranch "nixos-25.11";
     };
 
     os-staging = {

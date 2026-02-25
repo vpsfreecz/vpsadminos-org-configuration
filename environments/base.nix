@@ -26,11 +26,18 @@ with lib;
 
   nixpkgs.overlays = import ../overlays;
 
-  nix.settings.sandbox = true;
+  nix.settings = {
+    sandbox = true;
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
 
   nix.nixPath = [
     "nixpkgs=${swpins.nixpkgs}"
-  ] ++ (optional (hasAttr "vpsadminos" swpins) "vpsadminos=${swpins.vpsadminos}");
+  ]
+  ++ (optional (hasAttr "vpsadminos" swpins) "vpsadminos=${swpins.vpsadminos}");
 
   environment.systemPackages = with pkgs; [
     wget

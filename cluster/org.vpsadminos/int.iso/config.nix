@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   confDir,
   confLib,
   confData,
@@ -14,7 +15,14 @@ let
     name = "org.vpsadminos/proxy";
   };
 
-  images = import ../../../lib/images.nix { inherit config lib pkgs; };
+  images = import ../../../lib/images.nix {
+    inherit
+      config
+      lib
+      pkgs
+      inputs
+      ;
+  };
 
   httpRoot = "/var/lib/vpsadminos-iso";
 

@@ -3,7 +3,7 @@
   pkgs,
   lib,
   confData,
-  swpins,
+  inputs,
   ...
 }:
 with lib;
@@ -35,9 +35,9 @@ with lib;
   };
 
   nix.nixPath = [
-    "nixpkgs=${swpins.nixpkgs}"
+    "nixpkgs=${inputs.nixpkgs}"
   ]
-  ++ (optional (hasAttr "vpsadminos" swpins) "vpsadminos=${swpins.vpsadminos}");
+  ++ (optional (hasAttr "vpsadminos" inputs) "vpsadminos=${inputs.vpsadminos}");
 
   environment.systemPackages = with pkgs; [
     wget

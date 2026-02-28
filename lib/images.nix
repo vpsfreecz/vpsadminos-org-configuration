@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
 }:
 with lib;
 let
@@ -14,24 +15,23 @@ let
       vpsadmin,
     }:
     let
-      # this is fed into scopedImport so vpsadminos sees correct <nixpkgs> everywhere
+      # this is fed into scopedImport so vpsadminos sees correct nixpkgs everywhere
       overrides = {
-        __nixPath =
-          [
-            {
-              prefix = "nixpkgs";
-              path = nixpkgs;
-            }
-            {
-              prefix = "vpsadminos";
-              path = vpsadminos;
-            }
-          ]
-          ++ (optional (!isNull vpsadmin) {
-            prefix = "vpsadmin";
-            path = vpsadmin;
-          })
-          ++ builtins.nixPath;
+        __nixPath = [
+          {
+            prefix = "nixpkgs";
+            path = nixpkgs;
+          }
+          {
+            prefix = "vpsadminos";
+            path = vpsadminos;
+          }
+        ]
+        ++ (optional (!isNull vpsadmin) {
+          prefix = "vpsadmin";
+          path = vpsadmin;
+        })
+        ++ builtins.nixPath;
         import = fn: scopedImport overrides fn;
         scopedImport = attrs: fn: scopedImport (overrides // attrs) fn;
         builtins = builtins // overrides;
@@ -51,9 +51,9 @@ let
     }@args:
     vpsadminosCustom {
       inherit modules;
-      vpsadminos = args.vpsadminos or <vpsadminos>;
-      nixpkgs = args.nixpkgs or <nixpkgs>;
-      vpsadmin = args.vpsadmin or null;
+      vpsadminos = args.vpsadminos or inputs.vpsadminos;
+      nixpkgs = args.nixpkgs or inputs.nixpkgs;
+      vpsadmin = args.vpsadmin or (inputs.vpsadmin or null);
     };
 
 in
@@ -62,7 +62,7 @@ in
     modules = [
       {
         imports = [
-          <vpsadminos/os/configs/iso.nix>
+          (inputs.vpsadminos + "/os/configs/iso.nix")
         ];
 
         system.secretsDir = null;

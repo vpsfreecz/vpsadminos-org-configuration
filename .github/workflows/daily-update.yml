@@ -37,13 +37,13 @@ jobs:
           restore-keys: |
             confctl-cache-${{ runner.os }}
 
-      - name: Update swpins
+      - name: Update flake inputs
         run: |
           sudo mkdir /nix/var/nix/gcroots/per-user/$USER
           sudo chown $USER /nix/var/nix/gcroots/per-user/$USER
 
-          bundle exec confctl swpins channel update --commit --no-changelog nixos-stable
-          bundle exec confctl swpins channel update --commit os-staging
+          bundle exec confctl inputs channel update --commit --no-changelog nixos-stable
+          bundle exec confctl inputs channel update --commit os-staging
 
       - name: Push updates
         run: |

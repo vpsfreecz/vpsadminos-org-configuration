@@ -3,7 +3,7 @@
   pkgs,
   lib,
   confLib,
-  swpins,
+  inputs,
   ...
 }:
 with lib;
@@ -13,9 +13,10 @@ let
     name = "org.vpsadminos/proxy";
   };
 
-  docsOs = swpins.vpsadminos;
+  docsOs = inputs.vpsadminos;
 
-  docsPkgs = import swpins.nixpkgs {
+  docsPkgs = import inputs.nixpkgs {
+    system = pkgs.stdenv.hostPlatform.system;
     overlays = [
       (import ("${docsOs}/os/overlays/osctl.nix"))
       (import ("${docsOs}/os/overlays/ruby.nix"))
@@ -38,7 +39,7 @@ let
 
   docsSource = pkgs.runCommand "os-docs-src" { } ''
     mkdir -p $out
-    cp -r ${swpins.vpsadminos}/docs/. $out/
+    cp -r ${inputs.vpsadminos}/docs/. $out/
     mkdir -p $out/js
     ln -s ${trackingCode} $out/js/vpsfree-matomo.js
   '';
@@ -56,12 +57,12 @@ let
         buildInputs = [ docsPkgs.yaml-merge ];
       }
       ''
-        yaml-merge ${swpins.vpsadminos}/mkdocs.yml ${configOverride} > $out
+        yaml-merge ${inputs.vpsadminos}/mkdocs.yml ${configOverride} > $out
       '';
 
   docs = pkgs.runCommand "docsroot" { buildInputs = [ docsPkgs.mkdocs ]; } ''
     mkdir -p $out
-    pushd ${swpins.vpsadminos}
+    pushd ${inputs.vpsadminos}
     mkdocs build --config-file ${mkdocsConfig} --site-dir $out
     popd
   '';
@@ -89,15 +90,15 @@ let
   '';
 
   manPaths = [
-    "${swpins.vpsadminos}/osctl/man"
-    "${swpins.vpsadminos}/osctl-exportfs/man"
-    "${swpins.vpsadminos}/osctl-image/man"
-    "${swpins.vpsadminos}/osctl-repo/man"
-    "${swpins.vpsadminos}/converter/man"
-    "${swpins.vpsadminos}/osup/man"
-    "${swpins.vpsadminos}/svctl/man"
-    "${swpins.vpsadminos}/osvm/man"
-    "${swpins.vpsadminos}/test-runner/man"
+    "${inputs.vpsadminos}/osctl/man"
+    "${inputs.vpsadminos}/osctl-exportfs/man"
+    "${inputs.vpsadminos}/osctl-image/man"
+    "${inputs.vpsadminos}/osctl-repo/man"
+    "${inputs.vpsadminos}/converter/man"
+    "${inputs.vpsadminos}/osup/man"
+    "${inputs.vpsadminos}/svctl/man"
+    "${inputs.vpsadminos}/osvm/man"
+    "${inputs.vpsadminos}/test-runner/man"
   ];
 
   buildMan =
@@ -153,7 +154,7 @@ let
         ];
       }
       ''
-        cp -R ${swpins.vpsadminos} vpsadminos
+        cp -R ${inputs.vpsadminos} vpsadminos
         chmod -R +w vpsadminos
         mkdir $out
         pushd vpsadminos
@@ -167,7 +168,7 @@ let
         popd
       '';
 
-  # osManual = import "${swpins.vpsadminos}/os/manual" { inherit pkgs; };
+  # osManual = import "${inputs.vpsadminos}/os/manual" { inherit pkgs; };
 
   # refOs = pkgs.runCommand "ref-os" {} ''
   #  mkdir $out

@@ -2,7 +2,7 @@
 {
   cluster."org.vpsadminos/int.www" = rec {
     spin = "nixos";
-    swpins.channels = [
+    inputs.channels = [
       "nixos-stable"
       "os-staging"
     ];

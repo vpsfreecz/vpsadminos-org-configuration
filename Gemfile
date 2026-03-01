@@ -2,9 +2,9 @@ source 'https://rubygems.org'
 
 confctl_path = ENV.fetch('CONFCTL_SRC', nil)
 
-if confctl_path && !confctl_path.empty?
-  gem 'confctl', path: confctl_path
-else
-  gem 'confctl'
+if confctl_path.nil? || confctl_path.empty?
+  raise 'CONFCTL_SRC must be set (use nix develop)'
 end
+
+gem 'confctl', path: confctl_path
 

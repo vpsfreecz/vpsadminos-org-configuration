@@ -1,4 +1,8 @@
 { config, pkgs, ... }:
+let
+  runnerUser = config.services.github-runners.runner.user;
+  runnerGroup = config.services.github-runners.runner.group;
+in
 {
   nix.settings = {
     substituters = [ "https://cache.vpsadminos.org" ];
@@ -9,6 +13,10 @@
     automatic = true;
     dates = "weekly";
   };
+
+  systemd.tmpfiles.rules = [
+    "d /nix/var/nix/gcroots/per-user/${runnerUser} 0755 ${runnerUser} ${runnerGroup} -"
+  ];
 
   networking.firewall.extraCommands = ''
     # socket network for vpsAdminOS test-runner
@@ -29,6 +37,9 @@
     serviceOverrides = {
       # Allow access to /dev/kvm
       PrivateDevices = false;
+      ReadWritePaths = [
+        "/nix/var/nix/gcroots/per-user/${runnerUser}"
+      ];
 
       # Permissions for virtiofsd
       RestrictNamespaces = false;

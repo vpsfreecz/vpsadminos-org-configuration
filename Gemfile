@@ -8,3 +8,7 @@ end
 
 gem 'confctl', path: confctl_path
 
+group :development do
+  gem 'overcommit'
+end
+

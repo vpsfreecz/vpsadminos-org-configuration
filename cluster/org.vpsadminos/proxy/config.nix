@@ -11,6 +11,21 @@ let
     name = "org.vpsadminos/int.cache";
   };
 
+  dockerRegistry = confLib.findMetaConfig {
+    cluster = config.cluster;
+    name = "org.vpsadminos/int.docker-registry";
+  };
+
+  ghRunner1 = confLib.findMetaConfig {
+    cluster = config.cluster;
+    name = "org.vpsadminos/int.gh-runner1";
+  };
+
+  ghRunner2 = confLib.findMetaConfig {
+    cluster = config.cluster;
+    name = "org.vpsadminos/int.gh-runner2";
+  };
+
   images = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/int.images";
@@ -25,6 +40,18 @@ let
     cluster = config.cluster;
     name = "org.vpsadminos/int.www";
   };
+
+  dockerRegistryAllowedCidrs = [
+    "${ghRunner1.addresses.primary.address}/32"
+    "${ghRunner2.addresses.primary.address}/32"
+
+    # aitherdev and other dev machines
+    "172.16.106.0/24"
+  ];
+
+  dockerRegistryAllowConfig = lib.concatStringsSep "\n" (
+    map (cidr: "allow ${cidr};") dockerRegistryAllowedCidrs
+  );
 in
 {
   imports = [
@@ -92,6 +119,18 @@ in
           return = "404 'File not found.'";
           extraConfig = ''
             internal;
+          '';
+        };
+      };
+
+      "docker-registry.vpsadminos.org" = {
+        enableACME = true;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "http://${dockerRegistry.services.docker-registry.address}:${toString dockerRegistry.services.docker-registry.port}";
+          extraConfig = ''
+            ${dockerRegistryAllowConfig}
+            deny all;
           '';
         };
       };

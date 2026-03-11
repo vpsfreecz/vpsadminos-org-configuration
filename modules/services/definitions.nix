@@ -36,6 +36,7 @@ in
     serviceDefinitions = {
       nginx.port = 80;
       nix-serve.port = 5000;
+      docker-registry.port = 5000;
       node-exporter.port = 9100;
     };
   };

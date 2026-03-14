@@ -29,6 +29,9 @@
         inherit inputs channels;
       };
 
-      devShells.x86_64-linux.default = confctl.lib.mkDevShell { system = "x86_64-linux"; };
+      devShells.x86_64-linux.default = confctl.lib.mkConfigDevShell {
+        system = "x86_64-linux";
+        mode = "tools";
+      };
     };
 }

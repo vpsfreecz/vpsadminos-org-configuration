@@ -11,7 +11,7 @@ in
 
   nix.gc = {
     automatic = true;
-    dates = "weekly";
+    dates = "daily";
   };
 
   systemd.tmpfiles.rules = [

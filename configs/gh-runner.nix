@@ -11,7 +11,8 @@ in
 
   nix.gc = {
     automatic = true;
-    dates = "daily";
+    dates = "*-*-* 00/8:00:00";
+    randomizedDelaySec = "30min";
   };
 
   systemd.tmpfiles.rules = [

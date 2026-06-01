@@ -26,6 +26,11 @@ let
     name = "org.vpsadminos/int.gh-runner2";
   };
 
+  ghRunner3 = confLib.findMetaConfig {
+    cluster = config.cluster;
+    name = "org.vpsadminos/int.gh-runner3";
+  };
+
   images = confLib.findMetaConfig {
     cluster = config.cluster;
     name = "org.vpsadminos/int.images";
@@ -44,6 +49,7 @@ let
   dockerRegistryAllowedCidrs = [
     "${ghRunner1.addresses.primary.address}/32"
     "${ghRunner2.addresses.primary.address}/32"
+    "${ghRunner3.addresses.primary.address}/32"
 
     # aitherdev and other dev machines
     "172.16.106.0/24"

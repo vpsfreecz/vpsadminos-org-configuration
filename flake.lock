@@ -238,11 +238,11 @@
         "nixpkgsUnstable": "nixpkgsUnstable_2"
       },
       "locked": {
-        "lastModified": 1780514472,
-        "narHash": "sha256-Qt8Rxj1wbjB4vo3I1tVXDYdx8inbcJcm30dldEm+Bdk=",
+        "lastModified": 1780642121,
+        "narHash": "sha256-iVCJcK+VgJKPQOoOhPm+b8raaIg80GRfG2cjvDcEW5U=",
         "owner": "vpsfreecz",
         "repo": "vpsadminos",
-        "rev": "a0adfcf74831b1623816309f2f830ef8905296fc",
+        "rev": "62de2d8b03876d84a997fcfd5fc30740da786ddf",
         "type": "github"
       },
       "original": {

@@ -3,7 +3,7 @@
 
   inputs = {
     confctl.url = "github:vpsfreecz/confctl";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     vpsadminos = {
       url = "github:vpsfreecz/vpsadminos/staging";
       inputs.nixpkgs.follows = "nixpkgs";

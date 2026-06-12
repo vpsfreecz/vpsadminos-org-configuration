@@ -4,6 +4,7 @@
   lib,
   confLib,
   inputs,
+  flakeInputs,
   ...
 }:
 with lib;
@@ -18,8 +19,8 @@ let
   docsPkgs = import inputs.nixpkgs {
     system = pkgs.stdenv.hostPlatform.system;
     overlays = [
-      (import ("${docsOs}/os/overlays/osctl.nix"))
-      (import ("${docsOs}/os/overlays/ruby.nix"))
+      flakeInputs.vpsadminos.overlays.osctl
+      flakeInputs.vpsadminos.overlays.ruby
     ];
   };
 

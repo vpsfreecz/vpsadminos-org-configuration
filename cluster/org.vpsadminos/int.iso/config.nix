@@ -3,6 +3,7 @@
   pkgs,
   lib,
   inputs,
+  flakeInputs,
   confDir,
   confLib,
   confData,
@@ -21,6 +22,7 @@ let
       lib
       pkgs
       inputs
+      flakeInputs
       ;
   };
 

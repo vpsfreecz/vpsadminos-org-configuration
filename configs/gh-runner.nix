@@ -1,25 +1,34 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   runnerUser = config.services.github-runners.runner.user;
   runnerGroup = config.services.github-runners.runner.group;
+  runnerRuntimeDirectory = "/run/github-runner/runner";
+  gcCoordinationDirectory = "/run/github-runner-nix-gc";
+  gcLockFile = "${gcCoordinationDirectory}/lock";
+  jobActiveFile = "${runnerRuntimeDirectory}/job-active";
+  githubRunnerJobStarted = pkgs.writeShellScript "github-runner-job-started" ''
+    exec ${pkgs.bash}/bin/bash ${./gh-runner/job-started.bash} \
+      ${lib.escapeShellArg gcLockFile} \
+      ${lib.escapeShellArg jobActiveFile}
+  '';
+  githubRunnerJobCompleted = pkgs.writeShellScript "github-runner-job-completed" ''
+    exec ${pkgs.bash}/bin/bash ${./gh-runner/job-completed.bash} \
+      ${lib.escapeShellArg gcLockFile} \
+      ${lib.escapeShellArg jobActiveFile}
+  '';
   githubRunnerNixGc = pkgs.writeShellScript "github-runner-nix-gc" ''
-    set -eu
-
-    store=/nix/store
-    threshold=75
-
-    blocks_total="$(${pkgs.coreutils}/bin/stat -f -c '%b' "$store")"
-    blocks_free="$(${pkgs.coreutils}/bin/stat -f -c '%f' "$store")"
-    blocks_used=$((blocks_total - blocks_free))
-    usage=$((blocks_used * 100 / blocks_total))
-
-    if [ "$usage" -lt "$threshold" ]; then
-      echo "$store usage is $usage%, below threshold $threshold%; skipping Nix garbage collection"
-      exit 0
-    fi
-
-    echo "$store usage is $usage%, at or above threshold $threshold%; running Nix garbage collection"
-    exec ${config.nix.package.out}/bin/nix-collect-garbage
+    exec ${pkgs.bash}/bin/bash ${./gh-runner/nix-gc.bash} \
+      ${lib.escapeShellArg gcLockFile} \
+      ${lib.escapeShellArg jobActiveFile} \
+      ${lib.escapeShellArg runnerUser} \
+      ${config.nix.package.out}/bin/nix-collect-garbage \
+      /nix/store \
+      75
   '';
 in
 {
@@ -30,6 +39,11 @@ in
 
   systemd.services.github-runner-nix-gc = {
     description = "GitHub runner conditional Nix garbage collection";
+    path = with pkgs; [
+      coreutils
+      procps
+      util-linux
+    ];
     script = "exec ${githubRunnerNixGc}";
     serviceConfig.Type = "oneshot";
   };
@@ -45,6 +59,8 @@ in
 
   systemd.tmpfiles.rules = [
     "d /nix/var/nix/gcroots/per-user/${runnerUser} 0755 ${runnerUser} ${runnerGroup} -"
+    "d ${gcCoordinationDirectory} 0770 root ${runnerGroup} -"
+    "f ${gcLockFile} 0660 ${runnerUser} ${runnerGroup} -"
   ];
 
   networking.firewall.extraCommands = ''
@@ -57,9 +73,14 @@ in
     tokenFile = "/private/gh-runner/token.txt";
     url = "https://github.com/vpsfreecz";
     runnerGroup = "vpsAdminOS runners";
+    extraEnvironment = {
+      ACTIONS_RUNNER_HOOK_JOB_STARTED = githubRunnerJobStarted;
+      ACTIONS_RUNNER_HOOK_JOB_COMPLETED = githubRunnerJobCompleted;
+    };
     extraPackages = with pkgs; [
       gnumake
       openssh
+      util-linux
     ];
     user = "github-runner";
     group = "github-runner";
@@ -68,6 +89,7 @@ in
       PrivateDevices = false;
       ReadWritePaths = [
         "/nix/var/nix/gcroots/per-user/${runnerUser}"
+        gcLockFile
       ];
 
       # Permissions for virtiofsd

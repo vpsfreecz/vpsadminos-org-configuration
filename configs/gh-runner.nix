@@ -11,12 +11,12 @@ let
   gcCoordinationDirectory = "/run/github-runner-nix-gc";
   gcLockFile = "${gcCoordinationDirectory}/lock";
   jobActiveFile = "${runnerRuntimeDirectory}/job-active";
-  githubRunnerJobStarted = pkgs.writeShellScript "github-runner-job-started" ''
+  githubRunnerJobStarted = pkgs.writeShellScript "github-runner-job-started.sh" ''
     exec ${pkgs.bash}/bin/bash ${./gh-runner/job-started.bash} \
       ${lib.escapeShellArg gcLockFile} \
       ${lib.escapeShellArg jobActiveFile}
   '';
-  githubRunnerJobCompleted = pkgs.writeShellScript "github-runner-job-completed" ''
+  githubRunnerJobCompleted = pkgs.writeShellScript "github-runner-job-completed.sh" ''
     exec ${pkgs.bash}/bin/bash ${./gh-runner/job-completed.bash} \
       ${lib.escapeShellArg gcLockFile} \
       ${lib.escapeShellArg jobActiveFile}

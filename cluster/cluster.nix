@@ -6,6 +6,7 @@
   ./org.vpsadminos/int.gh-runner1/module.nix
   ./org.vpsadminos/int.gh-runner2/module.nix
   ./org.vpsadminos/int.gh-runner3/module.nix
+  ./org.vpsadminos/int.gh-runner4/module.nix
   ./org.vpsadminos/int.images/module.nix
   ./org.vpsadminos/int.iso/module.nix
   ./org.vpsadminos/int.www/module.nix

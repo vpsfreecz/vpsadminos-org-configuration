@@ -273,11 +273,11 @@
         "ruby-lxc": "ruby-lxc"
       },
       "locked": {
-        "lastModified": 1786335141,
-        "narHash": "sha256-w4VZeMT5xQOd2YQwP2dMSL3QHT3BLtQ1Io/Pa9wXEVM=",
+        "lastModified": 1786420819,
+        "narHash": "sha256-JbdjFWB0AOjMx80m0cKrxAciFHTxopQanFvfLBilbCg=",
         "owner": "vpsfreecz",
         "repo": "vpsadminos",
-        "rev": "579737ac958c8cb5ac19794942983c632883b48b",
+        "rev": "4e6fcaacf6b25e270f3e3471693ba9504f34466a",
         "type": "github"
       },
       "original": {

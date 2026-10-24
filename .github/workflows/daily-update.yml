@@ -6,13 +6,21 @@ on:
 permissions:
   contents: write
 
+env:
+  CONFCTL_FLAKE: 'github:vpsfreecz/confctl/822c0e35dbe2549111912f539116b4225dfd3035#confctl'
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: master
+
+      - name: Save input baseline
+        run: cp flake.lock "$RUNNER_TEMP/flake-update-baseline.lock"
 
       - uses: cachix/install-nix-action@v31
         with:
@@ -23,8 +31,13 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Install git hooks
+        run: |
+          nix develop -c bundle exec overcommit --install
+          nix develop -c bundle exec overcommit --sign
+
       - name: Restore confctl cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: ~/.cache/confctl
           key: confctl-cache-${{ runner.os }}-${{ github.run_id }}
@@ -33,18 +46,34 @@ jobs:
 
       - name: Update flake inputs
         run: |
-          sudo mkdir /nix/var/nix/gcroots/per-user/$USER
-          sudo chown $USER /nix/var/nix/gcroots/per-user/$USER
+          set -euo pipefail
 
-          nix develop -c confctl inputs channel update --commit --no-changelog nixos-stable
-          nix develop -c confctl inputs channel update --commit os-staging
+          nix develop -c bash <<'EOF'
+            set -euo pipefail
 
-      - name: Push updates
+            sudo mkdir /nix/var/nix/gcroots/per-user/$USER
+            sudo chown $USER /nix/var/nix/gcroots/per-user/$USER
+
+            nix shell "$CONFCTL_FLAKE" -c confctl inputs channel update --forward-only --commit --no-changelog nixos-stable
+            nix shell "$CONFCTL_FLAKE" -c confctl inputs channel update --forward-only --commit os-staging
+          EOF
+
+      - name: Check and push updates
         run: |
-          git push origin master
+          set -euo pipefail
+
+          nix develop -c bash <<'EOF'
+            set -euo pipefail
+            git show HEAD:flake.lock > "$RUNNER_TEMP/flake-update-final.lock"
+            nix shell "$CONFCTL_FLAKE" -c confctl inputs check-update \
+              --old-lock "$RUNNER_TEMP/flake-update-baseline.lock" \
+              --new-lock "$RUNNER_TEMP/flake-update-final.lock"
+            git push origin master
+          EOF
 
       - name: Save confctl cache
-        uses: actions/cache/save@v5
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v6
         with:
           path: ~/.cache/confctl
           key: confctl-cache-${{ runner.os }}-${{ github.run_id }}

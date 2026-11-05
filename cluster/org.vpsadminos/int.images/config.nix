@@ -16,6 +16,7 @@ in
     ../../../environments/base.nix
     ../../../profiles/ct.nix
     ../../../configs/nginx-fancyindex.nix
+    ../../../modules/services/osctl-repo-server.nix
   ];
 
   networking = {
@@ -33,16 +34,24 @@ in
     '';
 
     virtualHosts = {
-      "images.vpsadminos.org" = {
-        root = "/srv/images";
-        locations = {
-          "/fancyindex/".alias = (toString pkgs.fancyIndexTheme) + "/";
+      "images.vpsadminos.org" =
+        lib.mkIf
+          (
+            !(
+              config.services.osctl-repo-server-site.enable
+              && config.services.osctl-repo-server-site.publicServing
+            )
+          )
+          {
+            root = "/srv/images";
+            locations = {
+              "/fancyindex/".alias = (toString pkgs.fancyIndexTheme) + "/";
 
-          "/".extraConfig = ''
-            include ${pkgs.fancyIndexTheme}/fancyindex.conf;
-          '';
-        };
-      };
+              "/".extraConfig = ''
+                include ${pkgs.fancyIndexTheme}/fancyindex.conf;
+              '';
+            };
+          };
     };
   };
 

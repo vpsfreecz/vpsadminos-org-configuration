@@ -63,6 +63,7 @@ in
   imports = [
     ../../../environments/base.nix
     ../../../profiles/ct.nix
+    ../../../configs/image-repository-proxy.nix
   ];
 
   networking = {

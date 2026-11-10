@@ -1,3 +1,4 @@
+# Operations and schema upgrades: docs/operations/image-repository.md
 {
   config,
   lib,
@@ -134,7 +135,11 @@ in
     logs = {
       maxBytes = positive "Maximum bytes per private JSON Lines file.";
       files = positive "Total retained access files, including the active file.";
-      statisticsDays = positive "UTC days retained in aggregate statistics.";
+      statisticsDays = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 365;
+        description = "UTC days retained in aggregate statistics. Shorter history remains an explicit operator choice.";
+      };
       statisticsMaxRows = positive "Maximum aggregate rows per repository and instance.";
       queueSize = positive "Maximum queued request events before dropping measurements.";
     };

@@ -41,13 +41,17 @@ let
       logs = {
         maxBytes = 16384;
         files = 2;
-        statisticsDays = 2;
         statisticsMaxRows = 20;
         queueSize = 2;
       };
     };
   };
   shadow = evaluate settings;
+  shorter = evaluate (
+    pkgs.lib.recursiveUpdate settings {
+      services.osctl-repo-server-site.logs.statisticsDays = 2;
+    }
+  );
   public = evaluate (
     pkgs.lib.recursiveUpdate settings {
       services.osctl-repo-server-site.publicServing = true;
@@ -71,6 +75,13 @@ assert service.RuntimeDirectoryMode == "0755";
 assert service.LogsDirectoryMode == "0700";
 assert pkgs.lib.hasInfix "--producer-group repo-producer" service.ExecStart;
 assert pkgs.lib.hasInfix "--trusted-proxy 127.0.0.1/32" service.ExecStart;
+assert shadow.config.services.osctl-repo-server-site.logs.statisticsDays == 365;
+assert pkgs.lib.hasInfix "--stats-days 365" service.ExecStart;
+assert shorter.config.services.osctl-repo-server-site.logs.statisticsDays == 2;
+assert pkgs.lib.hasInfix "--stats-days 2"
+  shorter.config.systemd.services.osctl-repo-server.serviceConfig.ExecStart;
+assert shadow.config.services.osctl-repo-server-site.logs.statisticsMaxRows == 20;
+assert shorter.config.services.osctl-repo-server-site.logs.statisticsMaxRows == 20;
 assert pkgs.lib.hasPrefix "restrict,command=" (builtins.head producerKeys);
 assert shadow.config.users.users.repo-producer.group == "repo-producer";
 assert shadow.config.users.users.repo-publisher.group == "repo-publisher";
@@ -105,4 +116,6 @@ assert pkgs.lib.hasInfix ".ok == true" maintenance.script;
   duplicateKeysRejected = true;
   automaticOrderedMaintenance = true;
   privateBoundedMaintenance = true;
+  yearlyStatisticsDefault = true;
+  explicitShorterStatisticsRetained = true;
 }

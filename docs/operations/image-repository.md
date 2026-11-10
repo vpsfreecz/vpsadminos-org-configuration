@@ -77,6 +77,75 @@ an image response. Queue pressure can leave measurement gaps. Application/contro
 diagnostics go to the journal separately. No GeoIP or requester identity service
 is involved.
 
+The normal `logs.statisticsDays` default is 365 UTC daily buckets. The dashboard
+offers Today, Last 7, Last 30 and Last 365 days as rolling windows, not calendar
+months or years. An explicitly configured shorter retention remains in effect;
+the coverage notice must show that history is partial. Increasing retention does
+not recover deleted days, and missing observations do not establish zero traffic.
+Keep `logs.statisticsMaxRows` finite and size it from the measured catalog and
+traffic dimensions. A day window does not guarantee complete coverage when the
+row cap, queue pressure, DB failure or a crash leaves measurement gaps. Check
+retained coverage, last update and failure/drop counters before using a yearly
+total. A completed full GET counts a response, not a unique person or successful
+container import; ranges, interruptions and errors have separate counters.
+
+## Upgrade an existing schema-1 service
+
+Schema 1 is a supported deployed predecessor. Select the reviewed service package
+through the existing channel procedure. Its technical migration contract belongs
+to the [service README](https://github.com/vpsfreecz/vpsadminos/tree/staging/osctl-repo-server#readme);
+retain the exact old/new binary, configuration and input graph in the rollout.
+Public v1 URLs, aliases/formats, role authority and catalog/run/receipt identities
+stay compatible; no fleet-wide client update or payload rewrite is required.
+
+Before an approved upgrade:
+
+1. Block new producer, publisher and administrator writes and stop the maintenance
+   timer. Drain
+   active uploads/control operations, then stop the sole service and its metrics
+   worker cleanly. Confirm all mutators are stopped, including an already-running
+   maintenance invocation. Do not let the service restart during backup.
+2. Create a coherent backup of SQLite and every referenced immutable payload.
+   The database is `<stateDirectory>/catalog.sqlite`; SQLite may also have
+   `catalog.sqlite-wal` and `catalog.sqlite-shm` sidecars. The service holds
+   `writer.lock` in the same directory. Preserve exclusive ownership while
+   creating and checking the backup. Handle WAL through SQLite's checkpoint/backup mechanism; never copy only a
+   live main database file. Preserve the private configuration, role ownership,
+   permissions and retained payload references needed for restoration. Keep keys
+   in their existing protected storage, not rollout evidence. Catalog export is
+   useful recovery data but does not replace runs, receipts and statistics in the
+   database backup.
+3. Verify a separate backup copy with the old binary, checking representative
+   catalog IDs/defaults/tags, active and sealed runs, replay receipts, retained
+   daily counters and referenced file hashes. Retain that verified backup and the
+   old binary until the upgrade and its recovery requirements are resolved.
+4. Start only the new binary. Startup performs the sequential schema 1 to 2
+   migration in a transaction before pending cleanup, listeners or read pools. Fresh
+   state follows the same ordered initialization/migration chain. A failed or
+   malformed conversion leaves schema/data/version at 1 and reports an error;
+   an unknown future schema refuses before mutation. Do not reset, reseed, alter
+   the version manually or start the old binary against a schema-2 database.
+5. Compare catalog IDs/aliases/formats and file hashes, active/sealed run reads,
+   replay, retained daily counters and legacy `/dashboard.json`. Verify the new
+   overview/catalog/usage routes, UTC windows/coverage, bounded row behavior and
+   requester privacy, plus old direct/cached v1 clients, HEAD/ranges/validators
+   and concurrent downloads. Reopen writers and maintenance only after the
+   actual source, state and HTTP checks pass.
+
+Stop on a missing backup, changed source/input graph, migration/integrity/privacy
+failure or unexpected local kernel build. A short demo retention override stays
+short unless changed explicitly; the new normal default does not authorize
+changing an existing deployment's limits.
+
+The old binary rejects schema 2. A software rollback therefore requires stopping
+all writers again and restoring the whole coherent schema-1 database/payload
+backup with the old package/configuration. This is restoration, not an in-place
+downgrade. Preserve or export and reconcile updates made after the backup before
+any old-state restoration; otherwise those publications, runs, receipts and
+statistics would be lost. Prefer a forward fix after new writes. An image-catalog
+export alone cannot reconstruct run/replay/statistics state. Never overwrite the
+new state or restore stale rsync input as a shortcut.
+
 ## Staging expiry and reclamation
 
 Enabling the service also enables `osctl-repo-server-maintenance.timer`. It runs
@@ -100,6 +169,11 @@ separate cleanup daemon.
 
 1. Resolve preflight access, disk budgets, runner admission and trusted requester
    routing. Test the reviewed package with disposable catalogs before production.
+   Use run-only mode for a real canary and configured full weekly shadow with one
+   sealed repository URL for the full distribution CI. Prove a coherent baseline
+   import/export round trip and old clients before replacing the public route;
+   keep public serving static during this stage. Capture the latest baseline
+   again under writer exclusion at the final transition.
 2. Exclude every legacy writer, including the build-host weekly timer, active VM
    build/post-run rsync, manual rsync and native local writers/GC. Stop or drain
    them only under an authorized deployment and machine ownership. An inactive

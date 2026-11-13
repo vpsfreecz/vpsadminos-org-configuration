@@ -10,11 +10,11 @@
         "vpsadminos": "vpsadminos"
       },
       "locked": {
-        "lastModified": 1780656236,
-        "narHash": "sha256-f/6v81bR8TgfqYG/TiCioWPaiZ/RH0O1vFOgcylfNxM=",
+        "lastModified": 1794591356,
+        "narHash": "sha256-Y7vwZfDEpElVUxEyDdpwHC8/1IapvkMz3/0AFr7U+yw=",
         "owner": "vpsfreecz",
         "repo": "confctl",
-        "rev": "af164b442100b92b8d93c0d67b315eff982e0180",
+        "rev": "ff5e017780a35fb97b549db2a51b570193867c3b",
         "type": "github"
       },
       "original": {
@@ -122,6 +122,22 @@
         "type": "github"
       }
     },
+    "netlinkrb_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1562850306,
+        "narHash": "sha256-0bXTWUdUDr2XP+bEIfIbxXap8Niva/IoPXTxFeXXImg=",
+        "owner": "vpsfreecz",
+        "repo": "netlinkrb",
+        "rev": "d9de53d843d2586ffa5b7b404887fa801c697ddf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vpsfreecz",
+        "repo": "netlinkrb",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1768564909,
@@ -140,11 +156,11 @@
     },
     "nixpkgsUnstable": {
       "locked": {
-        "lastModified": 1777578337,
-        "narHash": "sha256-Ad49moKWeXtKBJNy2ebiTQUEgdLyvGmTeykAQ9xM+Z4=",
+        "lastModified": 1786106723,
+        "narHash": "sha256-zDSUbpoeo/9ZmD2+wXnzxoo1+uhL8vxc0b8yuYMKYq0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "15f4ee454b1dce334612fa6843b3e05cf546efab",
+        "rev": "f13ff45afd1bb73e640eaa08a7066dbed07e3238",
         "type": "github"
       },
       "original": {
@@ -172,16 +188,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1777673416,
-        "narHash": "sha256-5c2POKPOjU40Kh0MirOdScBLG0bu9TAuPYAtPRNZMBs=",
+        "lastModified": 1786201459,
+        "narHash": "sha256-CiOTEjmwAmG2AWnaIno9YaCJJmpca2FXPhMAsnrolCg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "26ef669cffa904b6f6832ab57b77892a37c1a671",
+        "rev": "8b8c811c7c2541c30382c5de7ed26be055569c60",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-25.11",
+        "ref": "nixos-26.05",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -242,18 +258,37 @@
         "type": "github"
       }
     },
+    "ruby-lxc_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780499941,
+        "narHash": "sha256-guAdOSP9MyCL3BQ1LGXAhcCoXgEU1fUE69d2ATMqUGE=",
+        "owner": "vpsfreecz",
+        "repo": "ruby-lxc",
+        "rev": "004bf35eb90d41ba60b347b5b1e73d868a4f95d9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vpsfreecz",
+        "ref": "2026-06-03-nixos-26-05-port",
+        "repo": "ruby-lxc",
+        "type": "github"
+      }
+    },
     "vpsadminos": {
       "inputs": {
         "impermanence": "impermanence",
+        "netlinkrb": "netlinkrb",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgsUnstable": "nixpkgsUnstable"
+        "nixpkgsUnstable": "nixpkgsUnstable",
+        "ruby-lxc": "ruby-lxc"
       },
       "locked": {
-        "lastModified": 1777873711,
-        "narHash": "sha256-s4ZbPpZkzMPBwZn/sPhNK8y000DBNurfbdEekVISz84=",
+        "lastModified": 1786367885,
+        "narHash": "sha256-HOL3ACMUyRFhA4Cd2zk5qhnUf0zaEifHsQv86hwHgSc=",
         "owner": "vpsfreecz",
         "repo": "vpsadminos",
-        "rev": "a169291a51b9a5d1cab3e084d3b6a1c0280a10b3",
+        "rev": "67fcc17372d175b036706a1459a8b471bfc225e0",
         "type": "github"
       },
       "original": {
@@ -265,12 +300,12 @@
     "vpsadminos_2": {
       "inputs": {
         "impermanence": "impermanence_2",
-        "netlinkrb": "netlinkrb",
+        "netlinkrb": "netlinkrb_2",
         "nixpkgs": [
           "nixpkgs"
         ],
         "nixpkgsUnstable": "nixpkgsUnstable_2",
-        "ruby-lxc": "ruby-lxc"
+        "ruby-lxc": "ruby-lxc_2"
       },
       "locked": {
         "lastModified": 1794581903,

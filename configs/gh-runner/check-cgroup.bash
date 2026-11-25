@@ -5,9 +5,15 @@ set -euo pipefail
 # connects to GitHub. systemd can restart a unit with surviving processes
 # after its stop timeout, for example when a VM is stuck in kernel I/O.
 unit=$1
-IFS=: read -r hierarchy controllers path </proc/self/cgroup
-path=${path%/.control}
-if [[ $hierarchy != 0 || -n $controllers || $path != */"$unit" ]]; then
+# A container can expose legacy memberships before systemd's unified tree.
+path=
+while IFS=: read -r hierarchy controllers membership; do
+  if [[ $hierarchy == 0 && -z $controllers ]]; then
+    path=${membership%/.control}
+    break
+  fi
+done </proc/self/cgroup
+if [[ $path != */"$unit" ]]; then
   echo "Cannot identify the cgroup for $unit in /proc/self/cgroup" >&2
   exit 1
 fi

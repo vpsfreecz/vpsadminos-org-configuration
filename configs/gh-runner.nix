@@ -11,6 +11,9 @@ let
   gcCoordinationDirectory = "/run/github-runner-nix-gc";
   gcLockFile = "${gcCoordinationDirectory}/lock";
   jobActiveFile = "${runnerRuntimeDirectory}/job-active";
+  testStateCache = "github-runner-test-state";
+  # OsVm and livepatch profiles construct Unix socket names below this path.
+  testStateRoot = "/ci";
   githubRunnerJobStarted = pkgs.writeShellScript "github-runner-job-started.sh" ''
     exec ${pkgs.bash}/bin/bash ${./gh-runner/job-started.bash} \
       ${lib.escapeShellArg gcLockFile} \
@@ -74,6 +77,7 @@ in
     url = "https://github.com/vpsfreecz";
     runnerGroup = "vpsAdminOS runners";
     extraEnvironment = {
+      TEST_STATE_ROOT = testStateRoot;
       ACTIONS_RUNNER_HOOK_JOB_STARTED = githubRunnerJobStarted;
       ACTIONS_RUNNER_HOOK_JOB_COMPLETED = githubRunnerJobCompleted;
     };
@@ -85,6 +89,21 @@ in
     user = "github-runner";
     group = "github-runner";
     serviceOverrides = {
+      # One job per systemd invocation. Keep the persistent GitHub registration
+      # (including runner labels) while systemd reaps leftover VM processes.
+      ExecStart = lib.mkForce "${config.services.github-runners.runner.package}/bin/Runner.Listener run --startuptype service --once";
+      ExecStartPre = lib.mkBefore [
+        "${pkgs.bash}/bin/bash ${./gh-runner/check-cgroup.bash} %n"
+      ];
+      Restart = lib.mkForce "always";
+      RestartSec = "5s";
+      KillMode = "control-group";
+      TimeoutStopSec = "30s";
+      # The shared test-state actions retain unpublished evidence on disk.
+      CacheDirectory = testStateCache;
+      CacheDirectoryMode = "0700";
+      BindPaths = [ "/var/cache/${testStateCache}:${testStateRoot}" ];
+
       # Allow access to /dev/kvm
       PrivateDevices = false;
       ReadWritePaths = [
